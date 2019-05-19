@@ -1,0 +1,46 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#dropZone {
+	border: 1px dotted grey;
+	height: 100%;
+}
+
+body {
+	padding: 5px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color: #333;
+	height: 100%;
+	margin: 0px;
+}
+
+h3 {
+	background-color: #005392;
+	padding: 5px;
+	color: white;
+}
+
+button {
+	background-color: #005392;
+	padding: 5px;
+	color: white;
+	box-shadow: none;
+	border: 1px solid transparent;
+	font-size: 14px;
+	outline: none;
+	line-height: 100%;
+	white-space: nowrap;
+	vertical-align: middle;
+	border-radius: 3px;
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+}
+
+
+
+.file-input {
+	width: 100%;
+}
