@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>File Upload</title>
+<script src="/js/main.js"></script>
+<link rel="stylesheet" href="/css/main.css"></link>
+</head>
+<body>
+	<h3>File Upload</h3>
+	<div style="height: 100%">
+		<form id="uploadForm" name="uploadForm" action="/uploadMultipleFiles">
+			<div>
+				<label>Case Number</label> <input type="text"></input>
+			</div>
+			<hr />
+
+		</form>
+		<script type="text/javascript">
+			var uploader = new Uploader({
+				id : 'uploadForm',
+				uploadType : 'serial'
+			});
+		</script>
+	</div>
+
+</body>
+</html>
