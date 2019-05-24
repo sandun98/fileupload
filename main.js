@@ -6,6 +6,7 @@ class Uploader {
     this.config = config;
     this.thumbnailWidth = 200;
     this.uploadForm = document.querySelector("#" + config.id);
+    this.canvas = document.createElement("canvas");
 
     if (!this.validate()) return;
 
@@ -77,8 +78,81 @@ class Uploader {
   }
 
   filesSelected(e) {
+    this.progressBar.style.display = "none";
     this.reset();
-    this.setupReader(e.target.files, 0);
+    for (var i = 0; i < e.target.files.length; i++) {
+      this.creatThumbNail(e.target.files[i]);
+    }
+    this.readFile(e.target.files, 0);
+  }
+  creatThumbNail(file) {
+    var div = document.createElement("div");
+    var span = document.createElement("div");
+    span.innerHTML = file.name;
+    var img = document.createElement("img");
+    img.id = file.name;
+    div.style =
+      "border :1px solid grey;margin:5px;float:left;padding:5px;cursor:pointer;width:" +
+      (this.thumbnailWidth + 10) +
+      "px;height:" +
+      (this.thumbnailWidth + 10) +
+      "px";
+    div.appendChild(span);
+    div.appendChild(img);
+    img.style = "margin:0 auto"; //URL.createObjectURL(file);
+
+    img.src = "../images/giphy.gif"; //URL.createObjectURL(file);
+    img.width = this.thumbnailWidth;
+    img.alt = file.name;
+    this.dropZone.appendChild(div);
+    return div;
+  }
+
+  readFile(files, i) {
+    if (i > 0) {
+      if (files[i - 1]) {
+        URL.revokeObjectURL(files[i]);
+      }
+    }
+    if (files.length < i + 1) return;
+    var reader = new FileReader();
+    reader.onload = e => {
+      var img = document.getElementById(files[i].name);
+      img.onload = function() {
+        var ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        var canvasCopy = document.createElement("canvas");
+        var copyContext = canvasCopy.getContext("2d");
+        var ratio = 1;
+
+        if (img.width > this.thumbnailWidth)
+          ratio = this.thumbnailWidth / img.width;
+        else if (img.height > this.thumbnailWidth)
+          ratio = this.thumbnailWidth / img.height;
+
+        canvasCopy.width = img.width;
+        canvasCopy.height = img.height;
+        copyContext.drawImage(img, 0, 0);
+
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        ctx.drawImage(
+          canvasCopy,
+          0,
+          0,
+          canvasCopy.width,
+          canvasCopy.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+      };
+
+      img.src = URL.createObjectURL(files[i]);
+      this.readFile(files, i + 1);
+    };
+    reader.readAsBinaryString(files[i]);
   }
 
   reset() {
@@ -127,51 +201,17 @@ class Uploader {
       this.dropZone.style.background = "#F8F8F8";
 
       this.dropZone.addEventListener("mouseover", e => {
-        this.dropZone.style.border = "2px dashed #D8D8D8";
+        this.dropZone.style.border = "1px dashed #D8D8D8";
         this.dropZone.style.background = "#F9F9F9";
       });
       this.dropZone.addEventListener("mouseout", e => {
         this.dropZone.style.border = "1px dashed #D8D8D8";
-        this.dropZone.style.background = "#F8F8F8";
+        this.dropZone.style.background = "#F7F7F7";
       });
 
       this.uploadForm.parentNode.appendChild(document.createElement("hr"));
       this.uploadForm.parentNode.appendChild(this.dropZone);
     }
-  }
-
-  setupReader(files, i) {
-    var reader = new FileReader();
-    reader.onload = e => {
-      this.fileLoaded(e, files, i);
-    };
-    reader.readAsBinaryString(files[i]);
-  }
-
-  fileLoaded(e, files, i) {
-    this.progressBar.style.display = "none";
-    this.dropZone.appendChild(this.creatThumbNail(files[i]));
-    if (i < files.length - 1) {
-      this.setupReader(files, i + 1);
-    }
-  }
-
-  creatThumbNail(file) {
-    var div = document.createElement("div");
-    var span = document.createElement("div");
-    span.innerHTML = file.name;
-    var img = document.createElement("img");
-    img.id = file.name.replace(" ", "_");
-    div.style =
-      "border :1px solid grey;margin:5px;float:left;padding:5px;cursor:pointer;width:" +
-      (this.thumbnailWidth + 10) +
-      "px;";
-    div.appendChild(img);
-    div.appendChild(span);
-    img.src = URL.createObjectURL(file);
-    img.width = this.thumbnailWidth;
-    img.alt = file.name;
-    return div;
   }
 
   serialUpload(files) {
